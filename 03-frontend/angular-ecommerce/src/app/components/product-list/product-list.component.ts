@@ -16,8 +16,10 @@ export class ProductListComponent implements OnInit {
   searchMode: boolean = false;
   //properties for pagination
   thePageNumber: number = 1;
-  thePageSize: number = 10;
+  thePageSize: number = 5;
   theTotalElements: number = 0;
+
+  previousKeyword: string = "";
   
 
 
@@ -41,10 +43,16 @@ export class ProductListComponent implements OnInit {
   handleSearchProducts() {
     const theKeyword: string = this.route.snapshot.paramMap.get(`keyword`)!;
 
-    this.productService.searchProducts(theKeyword).subscribe(
-      data => {
-        this.products = data;
-      }
+    if(this.previousKeyword != theKeyword){
+      this.thePageNumber = 1;
+    }
+
+    this.previousKeyword = theKeyword;
+
+    console.log(`keyword=${theKeyword}, thePageNumber=${this.thePageNumber}`);
+
+    this.productService.SearchProductPaginate(this.thePageNumber - 1, this.thePageSize, theKeyword).subscribe(
+      this.processResult()
     );
   }
 
@@ -72,12 +80,21 @@ export class ProductListComponent implements OnInit {
 
     //now get the product for the given category id
     this.productService.getProductListPaginate(this.thePageNumber - 1, this.thePageSize, this.currentCategoryId)
-                       .subscribe(data => {
-                                    this.products = data._embedded.products;
-                                    this.thePageNumber = data.page.number + 1;
-                                    this.thePageSize = data.page.size;
-                                    this.theTotalElements = data.page.totalElements;
-                                  });
+                       .subscribe(this.processResult());
+  }
+
+  updatePageSize(pageSize: string){
+    this.thePageSize = +pageSize;
+    this.thePageNumber = 1;
+    this.listProducts();
+  }
+
+  private processResult(){
+    return (data: any) => {this.products = data._embedded.products;
+      this.thePageNumber = data.page.number + 1;
+      this.thePageSize = data.page.size;
+      this.theTotalElements = data.page.totalElements;
+    };
   }
 
 }
