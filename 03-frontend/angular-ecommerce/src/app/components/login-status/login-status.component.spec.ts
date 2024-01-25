@@ -6,10 +6,12 @@ describe('LoginStatusComponent', () => {
   let component: LoginStatusComponent;
   let fixture: ComponentFixture<LoginStatusComponent>;
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      declarations: [LoginStatusComponent]
-    });
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [LoginStatusComponent]
+    })
+    .compileComponents();
+    
     fixture = TestBed.createComponent(LoginStatusComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
