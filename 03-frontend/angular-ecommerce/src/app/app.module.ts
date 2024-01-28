@@ -1,5 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { Injector, NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
 
 import { AppComponent } from './app.component';
 import { ProductListComponent } from './components/product-list/product-list.component';
@@ -19,6 +21,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { LoginComponent } from './components/login/login.component';
 import { LoginStatusComponent } from './components/login-status/login-status.component';
 
+
 import {
   OktaAuthModule,
   OktaCallbackComponent,
@@ -31,6 +34,7 @@ import { OktaAuth } from '@okta/okta-auth-js';
 import myAppConfig from './config/my-app-config';
 import { MembersPageComponent } from './components/members-page/members-page.component';
 import { Router } from '@angular/router';
+import { OrderHistoryComponent } from './components/order-history/order-history.component';
 
 const oktaConfig = myAppConfig.oidc;
 
@@ -46,6 +50,7 @@ function sendToLoginPage(oktaAuth: OktaAuth, injector: Injector){
 
 const routes: Routes = [
 
+  {path: 'order-history', component: OrderHistoryComponent, canActivate: [ OktaAuthGuard ], data: {onAuthRequired: sendToLoginPage}}, 
   {path: 'login/callback', component: OktaCallbackComponent},
   {path: 'login', component: LoginComponent},
   {path: 'members', component: MembersPageComponent, canActivate: [OktaAuthGuard], data: {onAuthRequired: sendToLoginPage}},
@@ -70,13 +75,16 @@ const routes: Routes = [
     ProductDetailsComponent,
     CartStatusComponent,
     CartDetailsComponent,
+    OrderHistoryComponent,
     CheckoutComponent,
     LoginComponent,
-    LoginStatusComponent
+    LoginStatusComponent,
+    
   ],
   imports: [
     RouterModule.forRoot(routes),
     BrowserModule,
+    CommonModule,
     HttpClientModule,
     NgbModule,
     ReactiveFormsModule,

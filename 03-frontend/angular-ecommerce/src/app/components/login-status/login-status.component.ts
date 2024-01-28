@@ -10,6 +10,7 @@ import { Component, Inject, OnInit } from '@angular/core';
  export class LoginStatusComponent implements OnInit{
    isAuthenticated:boolean = false;
    userFullName: string = '';
+   storage: Storage = sessionStorage;
 
    constructor(private oktaAuthService: OktaAuthStateService,
              @Inject(OKTA_AUTH) private oktaAuth: OktaAuth){}
@@ -27,11 +28,20 @@ import { Component, Inject, OnInit } from '@angular/core';
    getUserDetails() {
      // Fetch the logged-in user details (user's claims)
      // User full name is exposed as a property named 'name'
+     if(this.isAuthenticated){
+
      this.oktaAuth.getUser().then(
        (res) => {
          this.userFullName = res.name as string;
+
+         //retrieve theusers email from authentication response
+         const theEmail = res.email;
+
+         //now store the email in browser storage
+         this.storage.setItem('userEmail', JSON.stringify(theEmail));
        }
      );
+      }
    }
 
    logout(){
